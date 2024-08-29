@@ -1,38 +1,21 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-// Create a new instance of the PrismaClient
-const prisma = new PrismaClient();
+import institutionRepository from "../../repositories/institutionRepository.js";
 
-// Add this code under const prisma = new PrismaClient();
 const createInstitution = async (req, res) => {
-  // Try/catch blocks are used to handle exceptions
   try {
-    // Create a new institution
-    await prisma.institution.create({
-      // Data to be inserted
-      data: {
-        name: req.body.name,
-        region: req.body.region,
-        country: req.body.country,
-      },
-    });
-
-    // Get all institutions from the institution table
-    const newInstitutions = await prisma.institution.findMany();
-
-    // Send a JSON response
+    await institutionRepository.create(req.body);
+    const newInstitutions = await institutionRepository.findAll();
     return res.status(201).json({
       message: "Institution successfully created",
       data: newInstitutions,
     });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      {
-        if (err.code === "P2002") {
-          return res.status(409).json({
-            message: "Institution with the same name already exists",
-          });
-        }
+      if (err.code === "P2002") {
+        return res.status(409).json({
+          message: "Institution with the same name already exists",
+        });
       }
     } else {
       return res.status(500).json({
@@ -42,16 +25,12 @@ const createInstitution = async (req, res) => {
   }
 };
 
-// Add this code under the createInstitution function
 const getInstitutions = async (req, res) => {
   try {
-    const institutions = await prisma.institution.findMany();
-
-    // Check if there are no institutions
+    const institutions = await institutionRepository.findAll();
     if (!institutions) {
       return res.status(404).json({ message: "No institutions found" });
     }
-
     return res.status(200).json({
       data: institutions,
     });
@@ -62,20 +41,14 @@ const getInstitutions = async (req, res) => {
   }
 };
 
-// Add this code under the getInstitutions function
 const getInstitution = async (req, res) => {
   try {
-    const institution = await prisma.institution.findUnique({
-      where: { id: req.params.id },
-    });
-
-    // Check if there is no institution
+    const institution = await institutionRepository.findById(req.params.id);
     if (!institution) {
       return res.status(404).json({
         message: `No institution with the id: ${req.params.id} found`,
       });
     }
-
     return res.status(200).json({
       data: institution,
     });
@@ -86,32 +59,15 @@ const getInstitution = async (req, res) => {
   }
 };
 
-// Add this code under the getInstitution function
 const updateInstitution = async (req, res) => {
   try {
-    // Find the institution by id
-    let institution = await prisma.institution.findUnique({
-      where: { id: req.params.id },
-    });
-
-    // Check if there is no institution
+    let institution = await institutionRepository.findById(req.params.id);
     if (!institution) {
       return res.status(404).json({
         message: `No institution with the id: ${req.params.id} found`,
       });
     }
-
-    // Update the institution
-    institution = await prisma.institution.update({
-      where: { id: req.params.id },
-      data: {
-        // Data to be updated
-        name: req.body.name,
-        region: req.body.region,
-        country: req.body.country,
-      },
-    });
-
+    institution = await institutionRepository.update(req.params.id, req.body);
     return res.status(200).json({
       message: `Institution with the id: ${req.params.id} successfully updated`,
       data: institution,
@@ -131,23 +87,15 @@ const updateInstitution = async (req, res) => {
   }
 };
 
-// Add this code under the updateInstitution function
 const deleteInstitution = async (req, res) => {
   try {
-    const institution = await prisma.institution.findUnique({
-      where: { id: req.params.id },
-    });
-
+    const institution = await institutionRepository.findById(req.params.id);
     if (!institution) {
       return res.status(404).json({
         message: `No institution with the id: ${req.params.id} found`,
       });
     }
-
-    await prisma.institution.delete({
-      where: { id: req.params.id },
-    });
-
+    await institutionRepository.delete(req.params.id);
     return res.json({
       message: `Institution with the id: ${req.params.id} successfully deleted`,
     });
@@ -158,7 +106,6 @@ const deleteInstitution = async (req, res) => {
   }
 };
 
-// Add this code under the deleteInstitution function
 export {
   createInstitution,
   getInstitutions,
