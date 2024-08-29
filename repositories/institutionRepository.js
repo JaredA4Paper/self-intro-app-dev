@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -7,8 +7,25 @@ class InstitutionRepository {
     return await prisma.institution.create({ data });
   }
 
-  async findAll() {
-    return await prisma.institution.findMany();
+  // Find all institutions based on the provided filters, sorted by the specified column and order
+  async findAll(filters, sortBy = "id", sortOrder = "asc") {
+    const query = {
+      orderBy: {
+        [sortBy]: sortOrder, // Sort by the specified column and order
+      },
+    };
+
+    if (Object.keys(filters).length > 0) {
+      query.where = {};
+      // Loop through the filters and apply them dynamically
+      for (const [key, value] of Object.entries(filters)) {
+        if (value) {
+          query.where[key] = { contains: value };
+        }
+      }
+    }
+
+    return await prisma.institution.findMany(query);
   }
 
   async findById(id) {

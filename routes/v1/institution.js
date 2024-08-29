@@ -8,6 +8,11 @@ import {
   deleteInstitution,
 } from "../../controllers/v1/institution.js";
 
+import {
+  validatePostInstitution,
+  validatePutInstitution,
+} from "../../middleware/validation.js";
+
 const router = express.Router();
 
 /**
@@ -89,7 +94,7 @@ const router = express.Router();
  *                   type: string
  *                   example: "An unexpected error occurred"
  */
-router.post("/", createInstitution);
+router.post("/", validatePostInstitution, createInstitution);
 
 /**
  * @swagger
@@ -98,6 +103,34 @@ router.post("/", createInstitution);
  *     summary: Get all institutions
  *     tags:
  *       - Institution
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter institutions by name
+ *       - in: query
+ *         name: region
+ *         schema:
+ *           type: string
+ *         description: Filter institutions by region
+ *       - in: query
+ *         name: country
+ *         schema:
+ *           type: string
+ *         description: Filter institutions by country
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [id, name, region, country]
+ *         description: Field to sort the institutions by (default is 'id')
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Order to sort the institutions by (default is 'asc')
  *     responses:
  *       '200':
  *         description: Success
@@ -231,7 +264,7 @@ router.get("/:id", getInstitution);
  *                   type: string
  *                   example: "An unexpected error occurred"
  */
-router.put("/:id", updateInstitution);
+router.put("/:id", validatePutInstitution, updateInstitution);
 
 /**
  * @swagger

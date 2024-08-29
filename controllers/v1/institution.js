@@ -5,7 +5,7 @@ import institutionRepository from "../../repositories/institutionRepository.js";
 const createInstitution = async (req, res) => {
   try {
     await institutionRepository.create(req.body);
-    const newInstitutions = await institutionRepository.findAll();
+    const newInstitutions = await institutionRepository.findAll({}, "id", "asc");
     return res.status(201).json({
       message: "Institution successfully created",
       data: newInstitutions,
@@ -27,10 +27,28 @@ const createInstitution = async (req, res) => {
 
 const getInstitutions = async (req, res) => {
   try {
-    const institutions = await institutionRepository.findAll();
+    const filters = {
+      name: req.query.name || undefined,
+      region: req.query.region || undefined,
+      country: req.query.country || undefined,
+    };
+
+    // Extract the sortBy and sortOrder parameters from the query
+    const sortBy = req.query.sortBy || "id";
+    const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+
+    // Retrieve institutions based on the filters, sorted by the specified column and order
+    const institutions = await institutionRepository.findAll(
+      filters,
+      sortBy,
+      sortOrder
+    );
+
+    // Check if there are no institutions
     if (!institutions) {
       return res.status(404).json({ message: "No institutions found" });
     }
+
     return res.status(200).json({
       data: institutions,
     });
