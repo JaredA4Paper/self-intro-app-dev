@@ -11,7 +11,13 @@ import swaggerUi from "swagger-ui-express";
 import indexRoutes from "./routes/index.js";
 
 // This should be declared under import indexRoutes from "./routes/index.js";
-import institutionRoutes from "./routes/institution.js";
+import institutionRoutes from "./routes/v1/institution.js";
+
+// This should be declared under import institutionRoutes from "./routes/v1/institution.js";
+import departmentRoutes from "./routes/v1/department.js";
+
+// This should be declared under import institutionRoutes from "./routes/v1/institution.js";
+import { isContentTypeApplicationJSON } from "./middleware/utils.js";
 
 // Create an Express application
 const app = express();
@@ -40,11 +46,14 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: ["./routes/v1/*.js"],
 };
 
 // This should be declared under const swaggerOptions = { ... };
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+// This should be declared under const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use(isContentTypeApplicationJSON);
 
 // Use the PORT environment variable or 3000
 const PORT = process.env.PORT || 3000;
@@ -53,7 +62,10 @@ const PORT = process.env.PORT || 3000;
 app.use("/", indexRoutes);
 
 // This should be declared under app.use("/", indexRoutes);
-app.use("/api/institutions", institutionRoutes);
+app.use(`/api/v1/institutions`, institutionRoutes);
+
+// This should be declared under app.use("/api/v1/institutions", institutionRoutes);
+app.use("/api/v1/departments", departmentRoutes);
 
 // This should be declared under app.use("/api/institutions", institutionRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));

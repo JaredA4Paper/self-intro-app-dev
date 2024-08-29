@@ -6,7 +6,7 @@ import {
   getInstitution,
   updateInstitution,
   deleteInstitution,
-} from "../controllers/institution.js";
+} from "../../controllers/v1/institution.js";
 
 const router = express.Router();
 
@@ -42,7 +42,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/institutions:
+ * /api/v1/institutions:
  *   post:
  *     summary: Create a new institution
  *     tags:
@@ -93,7 +93,7 @@ router.post("/", createInstitution);
 
 /**
  * @swagger
- * /api/institutions:
+ * /api/v1/institutions:
  *   get:
  *     summary: Get all institutions
  *     tags:
@@ -135,7 +135,7 @@ router.get("/", getInstitutions);
 
 /**
  * @swagger
- * /api/institutions/{id}:
+ * /api/v1/institutions/{id}:
  *   get:
  *     summary: Get an institution by id
  *     tags:
@@ -179,7 +179,7 @@ router.get("/:id", getInstitution);
 
 /**
  * @swagger
- * /api/institutions/{id}:
+ * /api/v1/institutions/{id}:
  *   put:
  *     summary: Update an institution by id
  *     tags:
@@ -235,7 +235,7 @@ router.put("/:id", updateInstitution);
 
 /**
  * @swagger
- * /api/institutions/{id}:
+ * /api/v1/institutions/{id}:
  *   delete:
  *     summary: Delete an institution by id
  *     tags:
