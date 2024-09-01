@@ -35,6 +35,10 @@ const router = express.Router();
  *         country:
  *           type: string
  *           example: "Country Name"
+ *         userId:
+ *           type: string
+ *           format: uuid
+ *           example: "123e4567-e89b-12d3-a456-426614174000"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -43,6 +47,13 @@ const router = express.Router();
  *           type: string
  *           format: date-time
  *           example: "2024-07-14T12:34:56Z"
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   security:
+ *     - BearerAuth: []
  */
 
 /**
@@ -52,6 +63,8 @@ const router = express.Router();
  *     summary: Create a new institution
  *     tags:
  *       - Institution
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

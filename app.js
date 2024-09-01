@@ -19,6 +19,10 @@ import departmentRoutes from "./routes/v1/department.js";
 // This should be declared under import institutionRoutes from "./routes/v1/institution.js";
 import { isContentTypeApplicationJSON } from "./middleware/utils.js";
 
+import authRouteMiddleware from "./middleware/authRoute.js";
+
+import authRoutes from "./routes/v1/auth.js";
+
 // Create an Express application
 const app = express();
 
@@ -61,8 +65,10 @@ const PORT = process.env.PORT || 3000;
 // Use the routes module
 app.use("/", indexRoutes);
 
+app.use("/api/v1/auth", authRoutes);
+
 // This should be declared under app.use("/", indexRoutes);
-app.use(`/api/v1/institutions`, institutionRoutes);
+app.use("/api/v1/institutions", authRouteMiddleware, institutionRoutes); // Authenticated route
 
 // This should be declared under app.use("/api/v1/institutions", institutionRoutes);
 app.use("/api/v1/departments", departmentRoutes);
